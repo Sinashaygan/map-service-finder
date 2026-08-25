@@ -16,7 +16,12 @@ export const serviceSchema = z.object({
   address: z.string(),
   rating: z.number().min(0).max(5),
   review_count: z.number().int().nonnegative(),
-  price_level: z.number().int().min(1).max(4),
+  price_level: z.union([
+    z.literal(1),
+    z.literal(2),
+    z.literal(3),
+    z.literal(4),
+  ]),
   image_url: z.string().url(),
   is_open: z.boolean(),
   tags: z.array(z.string()),
@@ -26,4 +31,5 @@ export const serviceSchema = z.object({
   updated_at: z.string(),
 });
 
-export const serviceListSchema = z.array(serviceSchema)
+export const serviceListSchema = z.array(serviceSchema);
+export type rawType = z.infer<typeof serviceSchema>;
