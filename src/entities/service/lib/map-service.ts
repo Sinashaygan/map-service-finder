@@ -5,7 +5,7 @@ export function mapServiceToDomain(raw: rawType): Service {
   return {
     id: raw.id,
     name: raw.name,
-    slug: raw.slug,
+    // slug: raw.slug,
     category: raw.category,
     description: raw.description,
     address: raw.address,

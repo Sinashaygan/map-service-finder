@@ -1,20 +1,24 @@
 "use client";
 
-import { useServices } from "@/entities/service/api/use-services";
+import { useServices } from "@/features/service-finder/model/use-services";
 
 export default function Home() {
-  const { data, isLoading, isError, error } = useServices();
+  const { data, isPending, error } = useServices();
 
-  if (isLoading) {
-    return <main>Loading services…</main>;
-  }
-
-  if (isError) {
-    const message = error instanceof Error ? error.message : String(error);
-    return <main>{message}</main>;
-  }
+  if (isPending) return <p className="p-8">Loading services…</p>;
+  if (error) return <p className="p-8 text-red-600">{error.message}</p>;
 
   return (
-    <main>{`${data?.length ?? 0} services loaded`}</main>
+    <main className="p-8">
+      <h1 className="text-2xl font-bold">{data.length} services loaded</h1>
+      <ul className="mt-4 space-y-1 text-sm">
+        {data.slice(0, 10).map((s) => (
+          <li key={s.id}>
+            {s.name} — {s.category} — ⭐ {s.rating} — [{s.location.lat},{" "}
+            {s.location.lng}]
+          </li>
+        ))}
+      </ul>
+    </main>
   );
 }

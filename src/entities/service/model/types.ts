@@ -17,7 +17,7 @@ export interface Coordinates {
 export interface Service {
   id: string;
   name: string;
-  slug: string;
+  // slug: string;
   category: ServiceCategory;
   description: string;
   address: string;
