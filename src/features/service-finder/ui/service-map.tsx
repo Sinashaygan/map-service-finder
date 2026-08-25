@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Service } from "@/entities/service/model/types";
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
@@ -12,21 +12,27 @@ interface ServiceMapProps {
   onSelectService: (id: string) => void;
 }
 
-export default function ServiceMap({
+function FlyToSelected({
   services,
   selectedServiceId,
 }: Omit<ServiceMapProps, "onSelectService">) {
-    const map = useMap();
+  const map = useMap();
 
-    useEffect(() => {
-      if (!selectedServiceId) return;
-      const target = services.find((s) => s.id === selectedServiceId);
-      if (target) {
-        map.flyTo([target.location.lat, target.location.lng], 15, {
-          duration: 0.8,
-        });
-      }
-    }, [map, services, selectedServiceId]);
+  useEffect(() => {
+    if (!selectedServiceId) {
+      return;
+    }
 
-  return <div>service-map</div>;
+    const target = services.find((service) => service.id === selectedServiceId);
+
+    if (!target) {
+      return;
+    }
+
+    map.flyTo([target.location.lat, target.location.lng], 15, {
+      duration: 0.8,
+    });
+  }, [map, services, selectedServiceId]);
+
+  return null;
 }
