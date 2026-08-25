@@ -1,6 +1,7 @@
 "use client";
 
 import type { Service } from "@/entities/service/model/types";
+import { ServicesListItem } from "@/entities/service/ui/service-list-item";
 
 interface ServiceListProps {
   services: Service[];
@@ -27,22 +28,12 @@ export function ServiceList({
         const isSelected = service.id === selectedServiceId;
 
         return (
-          <li key={service.id}>
-            <button
-              type="button"
-              onClick={() => onSelectService(service.id)}
-              aria-pressed={isSelected}
-              className={`w-full px-4 py-3 text-left hover:bg-muted ${
-                isSelected ? "bg-muted" : ""
-              }`}
-            >
-              <div className="font-medium">{service.name}</div>
-
-              <div className="text-sm capitalize text-muted-foreground">
-                {service.category} · ⭐ {service.rating}
-              </div>
-            </button>
-          </li>
+          <ServicesListItem
+            service={service}
+            isSelected={isSelected}
+            key={service.id}
+            onSelect={onSelectService}
+          />
         );
       })}
     </ul>
