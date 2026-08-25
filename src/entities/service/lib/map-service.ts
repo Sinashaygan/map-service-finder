@@ -1,5 +1,5 @@
-import { rawType } from "./schema";
-import { Service } from "./types";
+import { rawType } from "../model/schema";
+import { Service } from "../model/types";
 
 export function mapServiceToDomain(raw: rawType): Service {
   return {

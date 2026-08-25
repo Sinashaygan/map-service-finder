@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/shared/lib/supabase-client";
-import { serviceListSchema } from "../model/service.schema";
-import { mapServiceToDomain } from "../model/service.mapper";
-import { Service } from "../model/service.types";
+import { serviceListSchema } from "../model/schema";
+import { mapServiceToDomain } from "../lib/map-service";
+import { Service } from "../model/types";
 
 export async function fetchServices(): Promise<Service[]> {
   const { data, error } = await supabase.from("service").select("*");
@@ -17,6 +17,6 @@ export function useServices() {
   return useQuery({
     queryKey: ["services"],
     queryFn: fetchServices,
-    staleTime: 5 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
   });
 }
