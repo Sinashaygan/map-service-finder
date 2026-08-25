@@ -13,6 +13,7 @@ declare module "react-leaflet-cluster" {
       getAllChildMarkers: () => Marker[];
     }) => Icon | DivIcon;
     polylineOptions?: Record<string, unknown>;
+    disableClusteringAtZoom?:number;
   }
 
   const MarkerClusterGroup: React.ComponentType<MarkerClusterGroupProps>;
