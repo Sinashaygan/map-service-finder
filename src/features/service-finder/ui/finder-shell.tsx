@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react";
 import { useServices } from "../model/use-services";
 import ServiceMap from "./service-map-loader";
