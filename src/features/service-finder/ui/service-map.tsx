@@ -1,54 +1,51 @@
 "use client";
-import { Service } from "@/entities/service/model/types";
+
 import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMap, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import { useDispatch, useSelector } from "react-redux";
 import "@/shared/lib/leaflet-setup";
+import type { AppDispatch, RootState } from "@/store/index";
+import { clearSelection , hoverService , selectService } from "@/store/selection-slice";
+import { useServices } from "../model/use-services";
 import { createServiceMarkerIcon } from "@/entities/service/ui/service-marker-icon";
 
 const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
 const DEFAULT_ZOOM = 12;
+const MAX_CLUSTER_ZOOM = 16;
 
-interface ServiceMapProps {
-  services: Service[];
-  selectedServiceId: string | null;
-  onSelectService: (id: string) => void;
-}
-
-function FlyToSelected({
-  services,
-  selectedServiceId,
-}: Omit<ServiceMapProps, "onSelectService">) {
+function FlyToSelected() {
   const map = useMap();
+  const selectedServiceId = useSelector(
+    (state: RootState) => state.selection.selectedServiceId,
+  );
+  const services = useServices().data ?? [];
 
   useEffect(() => {
-    if (!selectedServiceId) {
-      return;
+    if (!selectedServiceId) return;
+    const target = services.find((s) => s.id === selectedServiceId);
+    if (target) {
+      map.flyTo([target.location.lat, target.location.lng], 15, {
+        duration: 0.8,
+      });
     }
-
-    const target = services.find((service) => service.id === selectedServiceId);
-
-    if (!target) {
-      return;
-    }
-
-    map.flyTo([target.location.lat, target.location.lng], 15, {
-      duration: 0.8,
-    });
   }, [map, services, selectedServiceId]);
 
   return null;
 }
 
-export default function ServiceMap({
-  services,
-  selectedServiceId,
-  onSelectService,
-}: ServiceMapProps) {
+export default function ServiceMap() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: services = [] } = useServices();
+  const selectedServiceId = useSelector(
+    (state: RootState) => state.selection.selectedServiceId,
+  );
+
   return (
     <MapContainer
       center={TEHRAN_CENTER}
       zoom={DEFAULT_ZOOM}
-      scrollWheelZoom={true}
+      scrollWheelZoom
       className="h-full w-full"
     >
       <TileLayer
@@ -56,31 +53,37 @@ export default function ServiceMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {services.map((service) => (
-        <Marker
-          key={service.id}
-          position={[service.location.lat, service.location.lng]}
-          icon={createServiceMarkerIcon({
-            category: service.category,
-            isSelected: service.id === selectedServiceId,
-          })}
-          eventHandlers={{
-            click: () => onSelectService(service.id),
-          }}
-        >
-          <Popup>
-            <strong>{service.name}</strong>
-            <br />
-            <span className="capitalize">{service.category}</span> · ⭐{" "}
-            {service.rating}
-          </Popup>
-        </Marker>
-      ))}
+      <MarkerClusterGroup
+        maxClusterRadius={60}
+        disableClusteringAtZoom={MAX_CLUSTER_ZOOM}
+        showCoverageOnHover={false}
+        spiderfyOnMaxZoom
+      >
+        {services.map((service) => (
+          <Marker
+            key={service.id}
+            position={[service.location.lat, service.location.lng]}
+            icon={createServiceMarkerIcon({
+              category: service.category,
+              isSelected: service.id === selectedServiceId,
+            })}
+            eventHandlers={{
+              click: () => dispatch(selectService(service.id)),
+              mouseover: () => dispatch(hoverService(service.id)),
+              mouseout: () => dispatch(clearSelection()),
+            }}
+          >
+            <Popup>
+              <strong>{service.name}</strong>
+              <br />
+              <span className="capitalize">{service.category}</span> · ⭐{" "}
+              {service.rating}
+            </Popup>
+          </Marker>
+        ))}
+      </MarkerClusterGroup>
 
-      <FlyToSelected
-        services={services}
-        selectedServiceId={selectedServiceId}
-      />
+      <FlyToSelected />
     </MapContainer>
   );
 }
