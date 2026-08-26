@@ -14,3 +14,8 @@ export const selectActiveFilterCount = createSelector(
     return count;
   },
 );
+
+export const selectHasActiveFilters = createSelector(
+  [selectActiveFilterCount],
+  (count) => count > 0,
+);
