@@ -146,15 +146,6 @@ export function FilterBar() {
             {filters.minRating > 0 ? `${filters.minRating.toFixed(1)}+` : "Any"}
           </span>
         </div>
-        {/* <Slider
-          id="min-rating"
-          min={0}
-          max={5}
-          step={0.5}
-          value={[filters.minRating]}
-          onValueChange={([value]) => dispatch(setMinRating(value))}
-          aria-label="Minimum rating"
-        /> */}
         <Slider
           max={5}
           id="min-rating"
