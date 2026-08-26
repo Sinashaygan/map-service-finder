@@ -9,23 +9,21 @@ import {
   setHoveredService,
   setSelectedService,
 } from "@/store/selection-slice";
-import { useServices } from "../model/use-services";
+import type { Service } from "@/entities/service/model/types";
 import { createServiceMarkerIcon } from "@/entities/service/ui/service-marker-icon";
 
 const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
 const DEFAULT_ZOOM = 12;
 const MAX_CLUSTER_ZOOM = 16;
 
-function FlyToSelected() {
+function FlyToSelected({ services }: { services: Service[] }) {
   const map = useMap();
   const selectedServiceId = useAppSelector(
     (state) => state.selection.selectedServiceId,
   );
-  const { data: services } = useServices();
-
   useEffect(() => {
     if (!selectedServiceId) return;
-    const target = (services ?? []).find((s) => s.id === selectedServiceId);
+    const target = services.find((s) => s.id === selectedServiceId);
     if (target) {
       map.flyTo([target.location.lat, target.location.lng], 15, {
         duration: 0.8,
@@ -36,9 +34,8 @@ function FlyToSelected() {
   return null;
 }
 
-export default function ServiceMap() {
+export default function ServiceMap({ services }: { services: Service[] }) {
   const dispatch = useAppDispatch();
-  const { data: services = [] } = useServices();
   const { selectedServiceId, hoveredServiceId } = useAppSelector(
     (state) => state.selection,
   );
@@ -86,7 +83,7 @@ export default function ServiceMap() {
         ))}
       </MarkerClusterGroup>
 
-      <FlyToSelected />
+      <FlyToSelected services={services} />
     </MapContainer>
   );
 }
