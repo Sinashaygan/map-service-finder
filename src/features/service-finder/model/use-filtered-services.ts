@@ -15,4 +15,11 @@ export function useFilteredServices() {
   );
 
   const query = useServices(queryFilters);
+
+  return {
+    ...query,
+    services: query.data ?? [],
+    /** True while a new filter combination is loading over stale data. */
+    isRefiltering: query.isPlaceholderData && query.isFetching,
+  };
 }
