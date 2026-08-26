@@ -18,14 +18,14 @@ export const DEFAULT_SERVICE_FILTERS: ServiceFilters = {
   sortBy: "rating_desc",
 };
 
-// export const SERVICE_CATEGORIES = [
-//   "restaurant",
-//   "cafe",
-//   "pharmacy",
-//   "hospital",
-//   "mechanic",
-//   "hotel",
-//   "coworking",
-// ] as const;
+export const SERVICE_CATEGORIES = [
+  "restaurant",
+  "cafe",
+  "pharmacy",
+  "hospital",
+  "mechanic",
+  "hotel",
+  "coworking",
+] as const;
 
 // export type ServiceCategoryUnion = (typeof SERVICE_CATEGORIES)[number];
