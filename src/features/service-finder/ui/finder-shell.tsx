@@ -1,6 +1,11 @@
 "use client"
 
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  setHoveredService,
+  setSelectedService,
+} from "@/store/selection-slice";
 import { useServices } from "../model/use-services";
 import ServiceMap from "./service-map-loader";
 import { ServiceList } from "./service-list";
@@ -10,8 +15,9 @@ type ViewMode = "map" | "list";
 export function FinderShell() {
   const { data: services = [], isPending, isError, error } = useServices();
 
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
-    null,
+  const dispatch = useAppDispatch();
+  const { selectedServiceId, hoveredServiceId } = useAppSelector(
+    (state) => state.selection,
   );
 
   const [mobileView, setMobileView] = useState<ViewMode>("map");
@@ -59,7 +65,9 @@ export function FinderShell() {
           <ServiceList
             services={services}
             selectedServiceId={selectedServiceId}
-            onSelectService={setSelectedServiceId}
+            hoveredServiceId={hoveredServiceId}
+            onSelectService={(id) => dispatch(setSelectedService(id))}
+            onHoverService={(id) => dispatch(setHoveredService(id))}
           />
         </aside>
 
@@ -68,11 +76,7 @@ export function FinderShell() {
             mobileView === "map" ? "block" : "hidden"
           } md:block`}
         >
-          <ServiceMap
-            services={services}
-            selectedServiceId={selectedServiceId}
-            onSelectService={setSelectedServiceId}
-          />
+          <ServiceMap />
         </main>
       </div>
     </div>
