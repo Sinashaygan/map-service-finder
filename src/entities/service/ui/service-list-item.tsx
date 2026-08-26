@@ -11,7 +11,7 @@ interface ServiceListItemProps {
   onHoverChange: (hovered: boolean) => void;
 }
 
-function ServiceListItem({
+export function ServiceListItem({
   service,
   isSelected,
   isHovered,
