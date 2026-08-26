@@ -11,7 +11,7 @@ import { mapServiceToDomain } from "@/entities/service/lib/map-service";
 export async function fetchServices(
   filters: ServiceFilters = DEFAULT_SERVICE_FILTERS,
 ): Promise<Service[]> {
-  let query = supabase.from("services").select("*");
+  let query = supabase.from("service").select("*");
 
   const search = filters.search.trim();
   if (search !== "") {
