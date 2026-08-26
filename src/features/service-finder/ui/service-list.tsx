@@ -2,22 +2,21 @@
 
 import type { Service } from "@/entities/service/model/types";
 import { ServicesListItem } from "@/entities/service/ui/service-list-item";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  setHoveredService,
+  setSelectedService,
+} from "@/store/selection-slice";
 
 interface ServiceListProps {
   services: Service[];
-  selectedServiceId: string | null;
-  hoveredServiceId: string | null;
-  onSelectService: (id: string) => void;
-  onHoverService: (id: string | null) => void;
 }
 
-export function ServiceList({
-  services,
-  selectedServiceId,
-  hoveredServiceId,
-  onSelectService,
-  onHoverService,
-}: ServiceListProps) {
+export function ServiceList({ services }: ServiceListProps) {
+  const dispatch = useAppDispatch();
+  const { selectedServiceId, hoveredServiceId } = useAppSelector(
+    (state) => state.selection,
+  );
   if (services.length === 0) {
     return (
       <div className="p-6 text-sm text-muted-foreground">
@@ -38,8 +37,8 @@ export function ServiceList({
             isSelected={isSelected}
             isHovered={isHovered}
             key={service.id}
-            onSelect={onSelectService}
-            onHover={onHoverService}
+            onSelect={(id) => dispatch(setSelectedService(id))}
+            onHover={(id) => dispatch(setHoveredService(id))}
           />
         );
       })}
