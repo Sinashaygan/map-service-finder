@@ -1,8 +1,15 @@
 import { useFilteredServices } from "@/features/service-finder/model/use-filtered-services";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
+import { ServiceListSkeleton } from "./service-list-skeleton";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ServicesListItem } from "@/entities/service/ui/service-list-item";
+import { setHoveredService, setSelectedService } from "@/store/selection-slice";
+import { useAppDispatch } from "@/store/hooks";
 
 export function ServiceList() {
+  const dispatch = useAppDispatch();
   const { services, isPending, isError, error, isRefiltering } =
     useFilteredServices();
 
@@ -13,7 +20,7 @@ export function ServiceList() {
     (state: RootState) => state.selection.hoveredServiceId,
   );
 
-  if (isPending) return <ServiceListSkeleto />;
+  if (isPending) return <ServiceListSkeleton />;
 
   if (isError) {
     return (
@@ -31,4 +38,29 @@ export function ServiceList() {
       </div>
     );
   }
+
+  return (
+    <ScrollArea className="h-full">
+      <ul
+        className={cn(
+          "space-y-2 p-3 transition-opacity",
+          isRefiltering && "opacity-60",
+        )}
+        aria-busy={isRefiltering}
+      >
+        {services.map((service) => (
+          <ServicesListItem
+            key={service.id}
+            service={service}
+            isSelected={service.id === selectedServiceId}
+            isHovered={service.id === hoveredServiceId}
+            onSelect={() => dispatch(setSelectedService(service.id))}
+            onHover={(hovered) =>
+              dispatch(setHoveredService(hovered ? service.id : null))
+            }
+          />
+        ))}
+      </ul>
+    </ScrollArea>
+  );
 }
