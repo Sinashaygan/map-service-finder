@@ -4,6 +4,6 @@ export const serviceKeys = {
   detail: (id: string) => [...serviceKeys.all, "detail", id] as const,
 };
 
-function escapeLikePattern(input: string): string {
+export function escapeLikePattern(input: string): string {
   return input.replace(/[%_]/g, (match) => `\\${match}`);
 }
