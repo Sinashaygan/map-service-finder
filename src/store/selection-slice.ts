@@ -14,11 +14,11 @@ const selectionSlice = createSlice({
   name: "selection",
   initialState,
   reducers: {
-    selectService(state, action: PayloadAction<string | null>) {
+    setSelectedService(state, action: PayloadAction<string | null>) {
       state.selectedServiceId = action.payload;
     },
 
-    hoverService(state, action: PayloadAction<string | null>) {
+    setHoveredService(state, action: PayloadAction<string | null>) {
       state.hoveredServiceId = action.payload;
     },
 
@@ -29,7 +29,8 @@ const selectionSlice = createSlice({
   },
 });
 
-export const { clearSelection, hoverService, selectService } =
+export const { clearSelection, setHoveredService, setSelectedService } =
   selectionSlice.actions;
 
-export default selectionSlice.reducer;
+export const selectionReducer = selectionSlice.reducer;
+export default selectionReducer;
