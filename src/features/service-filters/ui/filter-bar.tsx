@@ -22,9 +22,19 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Search, X } from "lucide-react";
-import { resetFilters, setCategories, setMinRating, setSearch, setSortBy } from "@/store/filters-slice";
+import {
+  resetFilters,
+  setCategories,
+  setMinRating,
+  setSearch,
+  setSortBy,
+} from "@/store/filters-slice";
 import { ServiceCategory } from "@/entities/service/model/types";
-import { SERVICE_CATEGORIES, SERVICE_SORT_KEYS, ServiceSortKey } from "@/entities/service/model/filters";
+import {
+  SERVICE_CATEGORIES,
+  SERVICE_SORT_KEYS,
+  ServiceSortKey,
+} from "@/entities/service/model/filters";
 
 export function ServiceList() {
   const dispatch = useAppDispatch();
@@ -108,7 +118,6 @@ export function FilterBar() {
       <div className="space-y-2">
         <Label>Categories</Label>
         <ToggleGroup
-          type="multiple"
           value={filters.categories}
           onValueChange={(value) =>
             dispatch(setCategories(value as ServiceCategory[]))
@@ -137,13 +146,27 @@ export function FilterBar() {
             {filters.minRating > 0 ? `${filters.minRating.toFixed(1)}+` : "Any"}
           </span>
         </div>
-        <Slider
+        {/* <Slider
           id="min-rating"
           min={0}
           max={5}
           step={0.5}
           value={[filters.minRating]}
           onValueChange={([value]) => dispatch(setMinRating(value))}
+          aria-label="Minimum rating"
+        /> */}
+        <Slider
+          max={5}
+          id="min-rating"
+          step={0.5}
+          value={[filters.minRating]}
+          onValueChange={(value) => {
+            const minRating = typeof value === "number" ? value : value[0];
+
+            if (minRating !== undefined) {
+              dispatch(setMinRating(minRating));
+            }
+          }}
           aria-label="Minimum rating"
         />
       </div>

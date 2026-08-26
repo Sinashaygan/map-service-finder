@@ -7,10 +7,6 @@ export interface ServiceFilters {
   sortBy: ServiceSortKey;
 }
 
-// export const SERVICE_SORT_KEYS = ["rating_desc", "name_asc"] as const;
-
-// export type ServiceSortKey = (typeof SERVICE_SORT_KEYS)[number];
-
 export const SERVICE_SORT_KEYS = {
   rating_desc: "Highest rating",
   name_asc: "Name",
