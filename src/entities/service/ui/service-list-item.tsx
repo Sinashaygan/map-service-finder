@@ -1,57 +1,58 @@
-"use client";
-
+import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import type { Service } from "@/entities/service/model/types";
-
-interface ServicesListItemProps {
+import { cn } from "@/lib/utils";
+interface ServiceListItemProps {
   service: Service;
   isSelected: boolean;
   isHovered: boolean;
-  onSelect: (id: string) => void;
-  onHover: (id: string | null) => void;
+  onSelect: () => void;
+  onHoverChange: (hovered: boolean) => void;
 }
 
-export function ServicesListItem({
+function ServiceListItem({
   service,
   isSelected,
   isHovered,
   onSelect,
-  onHover,
-}: ServicesListItemProps) {
+  onHoverChange,
+}: ServiceListItemProps) {
   return (
-    <li className="p-2">
-      <Card
-        size="sm"
-        className={cn(
-          "transition-colors",
-          isSelected && "bg-muted ring-2 ring-ring",
-          isHovered && !isSelected && "bg-muted/60",
-        )}
+    <li>
+      {/* A real <button> gives us keyboard activation and focus rings for free. */}
+      <button
+        type="button"
+        onClick={onSelect}
+        onMouseEnter={() => onHoverChange(true)}
+        onMouseLeave={() => onHoverChange(false)}
+        onFocus={() => onHoverChange(true)}
+        onBlur={() => onHoverChange(false)}
+        aria-current={isSelected}
+        className="focus-visible:ring-ring w-full rounded-lg text-start focus-visible:ring-2 focus-visible:outline-none"
       >
-        <CardContent className="p-0">
-          <Button
-            variant="ghost"
-            className="h-auto w-full justify-start rounded-xl px-3 py-3 text-left"
-            onClick={() => onSelect(service.id)}
-            onMouseEnter={() => onHover(service.id)}
-            onMouseLeave={() => onHover(null)}
-            aria-pressed={isSelected}
-          >
-            <span className="min-w-0 space-y-1">
-              <span className="block truncate font-medium">{service.name}</span>
-              <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="secondary">{service.category}</Badge>
-                <span aria-label={`Rating ${service.rating} out of 5`}>
-                  ★ {service.rating}
-                </span>
-              </span>
+        <Card
+          className={cn(
+            "gap-2 p-3 transition-colors",
+            isHovered && "bg-accent/50",
+            isSelected && "border-primary bg-accent",
+          )}
+        >
+          <div className="flex items-start justify-between gap-2">
+            <span className="font-medium leading-tight">{service.name}</span>
+            <span className="flex shrink-0 items-center gap-1 text-sm tabular-nums">
+              <Star
+                className="size-3.5 fill-amber-400 text-amber-400"
+                aria-hidden="true"
+              />
+              {service.rating.toFixed(1)}
             </span>
-          </Button>
-        </CardContent>
-      </Card>
+          </div>
+          <Badge variant="outline" className="w-fit capitalize">
+            {service.category}
+          </Badge>
+        </Card>
+      </button>
     </li>
   );
 }
