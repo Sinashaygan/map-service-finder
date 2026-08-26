@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import selectionSlice from "./selection-slice";
+import { selectionReducer } from "./selection-slice";
 import uiSlice from "./ui-slice";
 import geoSlice from "./geo-slice";
 
 export const store = configureStore({
   reducer: {
-    selection: selectionSlice,
+    selection: selectionReducer,
     ui: uiSlice,
     geo: geoSlice,
   },

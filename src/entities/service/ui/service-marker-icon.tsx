@@ -16,16 +16,20 @@ const CATEGORY_GLYPH: Record<ServiceCategory, string> = {
 interface MarkerOptions {
   category: ServiceCategory;
   isSelected?: boolean;
+  isHovered?: boolean;
 }
 
 export function createServiceMarkerIcon({
   category,
   isSelected,
+  isHovered,
 }: MarkerOptions): L.DivIcon {
   const glyph = CATEGORY_GLYPH[category];
   const ring = isSelected
     ? "ring-2 ring-offset-2 ring-blue-500 scale-110"
-    : "ring-1 ring-black/10";
+    : isHovered
+      ? "ring-2 ring-offset-1 ring-blue-300 scale-105"
+      : "ring-1 ring-black/10";
 
   return L.divIcon({
     className: "service-marker", // clears Leaflet's default styles
