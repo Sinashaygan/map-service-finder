@@ -3,10 +3,12 @@
 import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { useDispatch, useSelector } from "react-redux";
 import "@/shared/lib/leaflet-setup";
-import type { AppDispatch, RootState } from "@/store/index";
-import { clearSelection , hoverService , selectService } from "@/store/selection-slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  setHoveredService,
+  setSelectedService,
+} from "@/store/selection-slice";
 import { useServices } from "../model/use-services";
 import { createServiceMarkerIcon } from "@/entities/service/ui/service-marker-icon";
 
@@ -16,14 +18,14 @@ const MAX_CLUSTER_ZOOM = 16;
 
 function FlyToSelected() {
   const map = useMap();
-  const selectedServiceId = useSelector(
-    (state: RootState) => state.selection.selectedServiceId,
+  const selectedServiceId = useAppSelector(
+    (state) => state.selection.selectedServiceId,
   );
-  const services = useServices().data ?? [];
+  const { data: services } = useServices();
 
   useEffect(() => {
     if (!selectedServiceId) return;
-    const target = services.find((s) => s.id === selectedServiceId);
+    const target = (services ?? []).find((s) => s.id === selectedServiceId);
     if (target) {
       map.flyTo([target.location.lat, target.location.lng], 15, {
         duration: 0.8,
@@ -35,10 +37,10 @@ function FlyToSelected() {
 }
 
 export default function ServiceMap() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { data: services = [] } = useServices();
-  const selectedServiceId = useSelector(
-    (state: RootState) => state.selection.selectedServiceId,
+  const { selectedServiceId, hoveredServiceId } = useAppSelector(
+    (state) => state.selection,
   );
 
   return (
@@ -66,11 +68,12 @@ export default function ServiceMap() {
             icon={createServiceMarkerIcon({
               category: service.category,
               isSelected: service.id === selectedServiceId,
+              isHovered: service.id === hoveredServiceId,
             })}
             eventHandlers={{
-              click: () => dispatch(selectService(service.id)),
-              mouseover: () => dispatch(hoverService(service.id)),
-              mouseout: () => dispatch(clearSelection()),
+              click: () => dispatch(setSelectedService(service.id)),
+              mouseover: () => dispatch(setHoveredService(service.id)),
+              mouseout: () => dispatch(setHoveredService(null)),
             }}
           >
             <Popup>
