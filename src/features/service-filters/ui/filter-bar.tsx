@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { ServiceListSkeleton } from "./service-list-skeleton";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ServicesListItem } from "@/entities/service/ui/service-list-item";
 import { setHoveredService, setSelectedService } from "@/store/selection-slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveFilterCount, selectFilters } from "../model/selectors";
@@ -35,6 +34,7 @@ import {
   SERVICE_SORT_KEYS,
   ServiceSortKey,
 } from "@/entities/service/model/filters";
+import { ServiceListItem } from "@/entities/service/ui/service-list-item";
 
 export function ServiceList() {
   const dispatch = useAppDispatch();
@@ -77,13 +77,13 @@ export function ServiceList() {
         aria-busy={isRefiltering}
       >
         {services.map((service) => (
-          <ServicesListItem
+          <ServiceListItem
             key={service.id}
             service={service}
             isSelected={service.id === selectedServiceId}
             isHovered={service.id === hoveredServiceId}
             onSelect={() => dispatch(setSelectedService(service.id))}
-            onHover={(hovered) =>
+            onHoverChange={(hovered) =>
               dispatch(setHoveredService(hovered ? service.id : null))
             }
           />
