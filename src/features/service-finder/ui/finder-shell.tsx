@@ -1,77 +1,104 @@
-"use client"
+"use client";
 
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { SlidersHorizontal } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useServices } from "../model/use-services";
-import ServiceMap from "./service-map-loader";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { FilterBar } from "@/features/service-filters/ui/filter-bar";
+import { selectActiveFilterCount } from "@/features/service-filters/model/selectors";
+import { cn } from "@/lib/utils";
 import { ServiceList } from "./service-list";
+import ServiceMap from "./service-map-loader";
+import { useFilteredServices } from "../model/use-filtered-services";
+import { useSelectionSync } from "../model/use-selection-sync";
 
 type ViewMode = "map" | "list";
 
 export function FinderShell() {
-  const { data: services = [], isPending, isError, error } = useServices();
-
   const [mobileView, setMobileView] = useState<ViewMode>("map");
+  const { services, isPending } = useFilteredServices();
+  const activeCount = useSelector(selectActiveFilterCount);
 
-  if (isPending) {
-    return (
-      <div className="space-y-4 p-6" aria-busy="true" aria-label="Loading services">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-24 w-full" />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Card className="m-6" role="alert">
-        <CardContent className="pt-6 text-destructive">
-          Unable to load services: {error.message}
-        </CardContent>
-      </Card>
-    );
-  }
+  useSelectionSync(services, isPending);
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col">
-      <div className="flex gap-2 border-b p-2 md:hidden" role="group" aria-label="Map or list view">
-        <Button
-          variant={mobileView === "map" ? "secondary" : "ghost"}
+    <div className="flex h-[calc(100dvh-4rem)] flex-col">
+      {/* Mobile toolbar: view switch + filters in a sheet */}
+      <div className="flex items-center gap-2 border-b p-2 md:hidden">
+        <ToggleGroup
+          multiple={false}
+          value={[mobileView]}
+          onValueChange={(value) => {
+            const nextView = value[0];
+            if (nextView === "map" || nextView === "list") {
+              setMobileView(nextView);
+            }
+          }}
+          variant="outline"
           size="sm"
-          onClick={() => setMobileView("map")}
-          aria-pressed={mobileView === "map"}
+          aria-label="Switch between map and list"
         >
-          Map
-        </Button>
+          <ToggleGroupItem value="map">Map</ToggleGroupItem>
+          <ToggleGroupItem value="list">List</ToggleGroupItem>
+        </ToggleGroup>
 
-        <Button
-          variant={mobileView === "list" ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => setMobileView("list")}
-          aria-pressed={mobileView === "list"}
-        >
-          List
-        </Button>
+        <Sheet>
+          <SheetTrigger
+            render={
+              <Button variant="outline" size="sm" className="ms-auto">
+                <SlidersHorizontal className="size-4" aria-hidden="true" />
+                Filters
+                {activeCount > 0 && (
+                  <Badge variant="secondary" className="ms-1">
+                    {activeCount}
+                  </Badge>
+                )}
+              </Button>
+            }
+          />
+          <SheetContent side="bottom" className="max-h-[85dvh] overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Filters</SheetTitle>
+              <SheetDescription>
+                Narrow down services by name, category, and rating.
+              </SheetDescription>
+            </SheetHeader>
+            <FilterBar />
+          </SheetContent>
+        </Sheet>
       </div>
 
-      <div className="flex min-h-0 flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         <aside
-          className={`w-full overflow-y-auto border-r md:block md:w-96 ${
-            mobileView === "list" ? "block" : "hidden"
-          }`}
+          className={cn(
+            "w-full flex-col overflow-hidden border-e md:flex md:w-96",
+            mobileView === "list" ? "flex" : "hidden",
+          )}
         >
-          <ServiceList
-            services={services}
-          />
+          {/* Desktop keeps filters inline; mobile gets them via the sheet. */}
+          <div className="hidden border-b md:block">
+            <FilterBar />
+          </div>
+          <div className="min-h-0 flex-1 overflow-hidden">
+            <ServiceList />
+          </div>
         </aside>
 
         <main
-          className={`min-h-0 flex-1 ${
-            mobileView === "map" ? "block" : "hidden"
-          } md:block`}
+          className={cn(
+            "flex-1",
+            mobileView === "map" ? "block" : "hidden md:block",
+          )}
         >
           <ServiceMap services={services} />
         </main>

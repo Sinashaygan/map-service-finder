@@ -1,47 +1,69 @@
 "use client";
 
-import type { Service } from "@/entities/service/model/types";
-import { ServicesListItem } from "@/entities/service/ui/service-list-item";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useDispatch, useSelector } from "react-redux";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import {
   setHoveredService,
   setSelectedService,
 } from "@/store/selection-slice";
+import type { RootState } from "@/store";
+import { useFilteredServices } from "../model/use-filtered-services";
+import {ServiceListItem} from "@/entities/service/ui/service-list-item"
+import { ServiceListSkeleton } from "@/features/service-filters/ui/service-list-skeleton";
 
-interface ServiceListProps {
-  services: Service[];
-}
-
-export function ServiceList({ services }: ServiceListProps) {
-  const dispatch = useAppDispatch();
-  const { selectedServiceId, hoveredServiceId } = useAppSelector(
-    (state) => state.selection,
+export function ServiceList() {
+  const dispatch = useDispatch();
+  const { services, isPending, isError, error, isRefiltering } =
+    useFilteredServices();
+  const selectedServiceId = useSelector(
+    (state: RootState) => state.selection.selectedServiceId,
   );
+  const hoveredServiceId = useSelector(
+    (state: RootState) => state.selection.hoveredServiceId,
+  );
+
+  if (isPending) return <ServiceListSkeleton />;
+
+  if (isError) {
+    return (
+      <p className="text-destructive p-4 text-sm" role="alert">
+        {error instanceof Error ? error.message : "Something went wrong."}
+      </p>
+    );
+  }
+
   if (services.length === 0) {
     return (
-      <div className="p-6 text-sm text-muted-foreground">
-        No services found.
+      <div className="text-muted-foreground p-8 text-center text-sm">
+        <p className="font-medium">No services match your filters.</p>
+        <p className="mt-1">Try widening the rating or clearing categories.</p>
       </div>
     );
   }
 
   return (
-    <ul className="divide-y">
-      {services.map((service) => {
-        const isSelected = service.id === selectedServiceId;
-        const isHovered = service.id === hoveredServiceId;
-
-        return (
-          <ServicesListItem
-            service={service}
-            isSelected={isSelected}
-            isHovered={isHovered}
+    <ScrollArea className="h-full">
+      <ul
+        className={cn(
+          "space-y-2 p-3 transition-opacity",
+          isRefiltering && "opacity-60",
+        )}
+        aria-busy={isRefiltering}
+      >
+        {services.map((service) => (
+          <ServiceListItem
             key={service.id}
-            onSelect={(id) => dispatch(setSelectedService(id))}
-            onHover={(id) => dispatch(setHoveredService(id))}
+            service={service}
+            isSelected={service.id === selectedServiceId}
+            isHovered={service.id === hoveredServiceId}
+            onSelect={() => dispatch(setSelectedService(service.id))}
+            onHoverChange={(hovered) =>
+              dispatch(setHoveredService(hovered ? service.id : null))
+            }
           />
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+    </ScrollArea>
   );
 }
