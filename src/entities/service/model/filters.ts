@@ -1,8 +1,6 @@
-import { ServiceCategory } from "./types";
-
 export interface ServiceFilters {
   search: string;
-  categories: ServiceCategory[];
+  categories: ServiceCategoryUnion[];
   minRating: number;
   sortBy: ServiceSortKey;
 }
@@ -17,3 +15,15 @@ export const DEFAULT_SERVICE_FILTERS: ServiceFilters = {
   minRating: 0,
   sortBy: "rating_desc",
 };
+
+export const SERVICE_CATEGORIES = [
+  "restaurant",
+  "cafe",
+  "pharmacy",
+  "hospital",
+  "mechanic",
+  "hotel",
+  "coworking",
+] as const;
+
+export type ServiceCategoryUnion = (typeof SERVICE_CATEGORIES)[number];
