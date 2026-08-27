@@ -28,7 +28,7 @@ function FlyToSelected({ services }: { services: ServiceWithDistance[] }) {
     if (!selectedServiceId) return;
     const target = services.find((s) => s.id === selectedServiceId);
     if (target) {
-      map.flyTo([target.location.lat, target.location.lng], 15, {
+      map.flyTo([target.location.lat, target.location.lng], 18, {
         duration: 0.8,
       });
     }
