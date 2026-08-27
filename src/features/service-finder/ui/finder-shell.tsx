@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { FilterBar } from "@/features/service-filters/ui/filter-bar";
 import { selectActiveFilterCount } from "@/features/service-filters/model/selectors";
 import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/hooks";
 import { ServiceList } from "./service-list";
 import ServiceMap from "./service-map-loader";
 import { useFilteredServices } from "../model/use-filtered-services";
@@ -27,7 +27,7 @@ type ViewMode = "map" | "list";
 export function FinderShell() {
   const [mobileView, setMobileView] = useState<ViewMode>("map");
   const { services, isPending } = useFilteredServices();
-  const activeCount = useSelector(selectActiveFilterCount);
+  const activeCount = useAppSelector(selectActiveFilterCount);
 
   useSelectionSync(services, isPending);
 
