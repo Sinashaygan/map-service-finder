@@ -1,10 +1,16 @@
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import type { Service } from "@/entities/service/model/types";
+import type { ServiceWithDistance } from "@/entities/service/model/types";
 import { cn } from "@/lib/utils";
+
+function formatDistance(distanceKm: number): string {
+  return distanceKm < 1
+    ? `${Math.round(distanceKm * 1000)} m`
+    : `${distanceKm.toFixed(1)} km`;
+}
 interface ServiceListItemProps {
-  service: Service;
+  service: ServiceWithDistance;
   isSelected: boolean;
   isHovered: boolean;
   onSelect: () => void;
@@ -51,6 +57,11 @@ export function ServiceListItem({
           <Badge variant="outline" className="w-fit capitalize">
             {service.category}
           </Badge>
+          {service.distanceKm !== null && (
+            <span className="text-xs text-muted-foreground">
+              {formatDistance(service.distanceKm)}
+            </span>
+          )}
         </Card>
       </button>
     </li>

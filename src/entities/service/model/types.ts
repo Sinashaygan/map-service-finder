@@ -31,3 +31,7 @@ export interface Service {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ServiceWithDistance extends Service {
+  distanceKm: number | null;
+}

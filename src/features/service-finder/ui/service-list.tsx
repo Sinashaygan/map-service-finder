@@ -1,26 +1,22 @@
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import {
   setHoveredService,
   setSelectedService,
 } from "@/store/selection-slice";
-import type { RootState } from "@/store";
-import { useFilteredServices } from "../model/use-filtered-services";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useServicesWithDistance } from "../model/use-services-with-distance";
 import {ServiceListItem} from "@/entities/service/ui/service-list-item"
 import { ServiceListSkeleton } from "@/features/service-filters/ui/service-list-skeleton";
 
 export function ServiceList() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { services, isPending, isError, error, isRefiltering } =
-    useFilteredServices();
-  const selectedServiceId = useSelector(
-    (state: RootState) => state.selection.selectedServiceId,
-  );
-  const hoveredServiceId = useSelector(
-    (state: RootState) => state.selection.hoveredServiceId,
+    useServicesWithDistance();
+  const { selectedServiceId, hoveredServiceId } = useAppSelector(
+    (state) => state.selection,
   );
 
   if (isPending) return <ServiceListSkeleton />;

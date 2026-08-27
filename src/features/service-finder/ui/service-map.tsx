@@ -9,14 +9,17 @@ import {
   setHoveredService,
   setSelectedService,
 } from "@/store/selection-slice";
-import type { Service } from "@/entities/service/model/types";
+import type { ServiceWithDistance } from "@/entities/service/model/types";
 import { createServiceMarkerIcon } from "@/entities/service/ui/service-marker-icon";
+import { MapFocusController } from "./map-focus-controller";
+import { UserLocationLayer } from "./location-finder";
+import { useServicesWithDistance } from "../model/use-services-with-distance";
 
 const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
 const DEFAULT_ZOOM = 12;
 const MAX_CLUSTER_ZOOM = 16;
 
-function FlyToSelected({ services }: { services: Service[] }) {
+function FlyToSelected({ services }: { services: ServiceWithDistance[] }) {
   const map = useMap();
   const selectedServiceId = useAppSelector(
     (state) => state.selection.selectedServiceId,
@@ -25,7 +28,7 @@ function FlyToSelected({ services }: { services: Service[] }) {
     if (!selectedServiceId) return;
     const target = services.find((s) => s.id === selectedServiceId);
     if (target) {
-      map.flyTo([target.location.lat, target.location.lng], 15, {
+      map.flyTo([target.location.lat, target.location.lng], 18, {
         duration: 0.8,
       });
     }
@@ -34,8 +37,9 @@ function FlyToSelected({ services }: { services: Service[] }) {
   return null;
 }
 
-export default function ServiceMap({ services }: { services: Service[] }) {
+export default function ServiceMap() {
   const dispatch = useAppDispatch();
+  const { services } = useServicesWithDistance();
   const { selectedServiceId, hoveredServiceId } = useAppSelector(
     (state) => state.selection,
   );
@@ -51,6 +55,8 @@ export default function ServiceMap({ services }: { services: Service[] }) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <MapFocusController />
+      <UserLocationLayer />
 
       <MarkerClusterGroup
         maxClusterRadius={60}
