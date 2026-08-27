@@ -35,6 +35,8 @@ import {
   ServiceSortKey,
 } from "@/entities/service/model/filters";
 import { ServiceListItem } from "@/entities/service/ui/service-list-item";
+import { LocateMeButton } from "@/features/geolocation/ui/locate-me-button";
+import { RadiusControl } from "@/features/geolocation/ui/radius-control";
 
 export function ServiceList() {
   const dispatch = useAppDispatch();
@@ -100,6 +102,9 @@ export function FilterBar() {
 
   return (
     <div className="space-y-4 p-4">
+      <LocateMeButton />
+      <RadiusControl />
+
       <div className="relative">
         <Search
           className="text-muted-foreground pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2"

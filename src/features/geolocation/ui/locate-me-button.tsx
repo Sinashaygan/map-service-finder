@@ -18,7 +18,7 @@ export function LocateMeButton() {
         className="gap-2"
       >
         <MapPinOff className="size-4" aria-hidden="true" />
-        حذف موقعیت من
+        Delete my location
       </Button>
     );
   }
@@ -38,7 +38,7 @@ export function LocateMeButton() {
         ) : (
           <LocateFixed className="size-4" aria-hidden="true" />
         )}
-        {isRequesting ? "در حال یافتن موقعیت…" : "نزدیک من"}
+        {isRequesting ? "Finding your location..." : "Near me"}
       </Button>
 
       {geo.state === "error" && (

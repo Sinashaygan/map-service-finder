@@ -11,6 +11,8 @@ import {
 } from "@/store/selection-slice";
 import type { Service } from "@/entities/service/model/types";
 import { createServiceMarkerIcon } from "@/entities/service/ui/service-marker-icon";
+import { MapFocusController } from "./map-focus-controller";
+import { UserLocationLayer } from "./location-finder";
 
 const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
 const DEFAULT_ZOOM = 12;
@@ -51,6 +53,8 @@ export default function ServiceMap({ services }: { services: Service[] }) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <MapFocusController />
+      <UserLocationLayer />
 
       <MarkerClusterGroup
         maxClusterRadius={60}
