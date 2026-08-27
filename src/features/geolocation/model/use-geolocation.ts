@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { GeolocationErrorReason } from "./types";
 import {
+    locationCleared,
   locationFailed,
   locationRequested,
   locationResolved,
@@ -70,4 +71,15 @@ export function useGeolocation() {
       GEOLOCATION_OPTIONS,
     );
   }, [dispatch]);
+
+  const clearLocation = useCallback(() => {
+    dispatch(locationCleared());
+  }, [dispatch]);
+
+  return {
+    geo,
+    isRequesting: geo.state === "requesting",
+    requestLocation,
+    clearLocation,
+  };
 }
