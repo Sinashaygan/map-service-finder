@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import type { Service } from "@/entities/service/model/types";
 import { clearSelection } from "@/store/selection-slice";
-import type { AppDispatch, RootState } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 /**
  * Clears the current map/list selection when the selected service
@@ -13,9 +12,9 @@ import type { AppDispatch, RootState } from "@/store";
  * silently targeting a hidden marker.
  */
 export function useSelectionSync(services: Service[], isPending: boolean) {
-  const dispatch = useDispatch<AppDispatch>();
-  const selectedServiceId = useSelector(
-    (state: RootState) => state.selection.selectedServiceId,
+  const dispatch = useAppDispatch();
+  const selectedServiceId = useAppSelector(
+    (state) => state.selection.selectedServiceId,
   );
 
   useEffect(() => {
