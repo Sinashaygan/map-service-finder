@@ -7,3 +7,11 @@ export function distanceInKm(from: Coordinates, to: Coordinates) {
     units: "kilometers",
   });
 }
+
+export function isWithinRadius(
+  center: Coordinates,
+  target: Coordinates,
+  radiusKm: number,
+): boolean {
+  return distanceInKm(center, target) <= radiusKm;
+}
