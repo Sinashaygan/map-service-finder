@@ -10,6 +10,7 @@ export interface ServiceFilters {
 export const SERVICE_SORT_KEYS = {
   rating_desc: "Highest rating",
   name_asc: "Name",
+  distance: "Distance",
 } as const satisfies Record<string, string>;
 
 export type ServiceSortKey = keyof typeof SERVICE_SORT_KEYS;
