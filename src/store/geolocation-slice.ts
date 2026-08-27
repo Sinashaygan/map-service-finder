@@ -1,5 +1,8 @@
 import { Coordinates } from "@/entities/service/model/types";
-import { GeolocationErrorReason, GeolocationState } from "@/features/geolocation/model/types";
+import {
+  GeolocationErrorReason,
+  GeolocationState,
+} from "@/features/geolocation/model/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export const DEFAULT_RADIUS_KM = 5;
@@ -30,14 +33,14 @@ const geolocationSlice = createSlice({
       action: PayloadAction<{ position: Coordinates; accuracyMeters: number }>,
     ) {
       state.geo = {
-        status: "success",
+        state: "success",
         position: action.payload.position,
         accuracyMeters: action.payload.accuracyMeters,
         timestamp: Date.now(),
       };
     },
     locationFailed(state, action: PayloadAction<GeolocationErrorReason>) {
-      state.geo = { status: "error", reason: action.payload };
+      state.geo = { state: "error", reason: action.payload };
     },
     locationCleared(state) {
       state.geo = { state: "idle" };
@@ -54,4 +57,29 @@ const geolocationSlice = createSlice({
       state.isRadiusFilterEnabled = action.payload;
     },
   },
+  selectors: {
+    selectGeoState: (state) => state.geo,
+    selectRadiusKm: (state) => state.radiusKm,
+    selectIsRadiusFilterEnabled: (state) => state.isRadiusFilterEnabled,
+    selectUserPosition: (state) =>
+      state.geo.state === "success" ? state.geo.position : null,
+  },
 });
+
+export const {
+  locationRequested,
+  locationResolved,
+  locationFailed,
+  locationCleared,
+  radiusChanged,
+  radiusFilterToggled,
+} = geolocationSlice.actions;
+
+export const {
+  selectGeoState,
+  selectRadiusKm,
+  selectIsRadiusFilterEnabled,
+  selectUserPosition,
+} = geolocationSlice.selectors;
+
+export const geoSlice= geolocationSlice.reducer;

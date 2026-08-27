@@ -7,12 +7,12 @@ export type GeolocationState =
   | { state: "idle" }
   | { state: "requesting" }
   | {
-      status: "success";
+      state: "success";
       position: Coordinates;
       accuracyMeters: number;
       timestamp: number;
     }
-  | { status: "error"; reason: GeolocationErrorReason };
+  | { state: "error"; reason: GeolocationErrorReason };
 
 export type GeolocationErrorReason =
   | "unsupported"
