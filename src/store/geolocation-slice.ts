@@ -82,4 +82,4 @@ export const {
   selectUserPosition,
 } = geolocationSlice.selectors;
 
-export const geoSlice= geolocationSlice.reducer;
+export const geoSlice = geolocationSlice.reducer;

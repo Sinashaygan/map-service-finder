@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { selectionReducer } from "./selection-slice";
 import uiSlice from "./ui-slice";
-import geoSlice from "./geo-slice";
 import { filtersReducer } from "./filters-slice";
+import { geoSlice } from "./geolocation-slice";
 
 export const store = configureStore({
   reducer: {
