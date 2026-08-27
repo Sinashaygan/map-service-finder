@@ -49,7 +49,7 @@ export function FilterBar() {
           type="search"
           value={filters.search}
           onChange={(event) => dispatch(setSearch(event.target.value))}
-          placeholder="Search servicesâ€¦"
+          placeholder="Search services"
           aria-label="Search services by name"
           className="ps-9"
         />
