@@ -8,8 +8,8 @@ export const store = configureStore({
   reducer: {
     selection: selectionReducer,
     ui: uiSlice,
-    geo: geoSlice,
-    filters:filtersReducer
+    geolocation: geoSlice,
+    filters: filtersReducer,
   },
 });
 
