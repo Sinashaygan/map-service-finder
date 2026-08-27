@@ -100,7 +100,7 @@ export function FinderShell() {
             mobileView === "map" ? "block" : "hidden md:block",
           )}
         >
-          <ServiceMap services={services} />
+          <ServiceMap />
         </main>
       </div>
     </div>
