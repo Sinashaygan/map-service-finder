@@ -13,47 +13,48 @@ import { useFilteredServices } from "./use-filtered-services";
 import { selectFilters } from "@/features/service-filters/model/selectors";
 
 export function useServicesWithDistance() {
-  // نتیجهٔ فیلترهای Server-side
   const query = useFilteredServices();
   const userPosition = useAppSelector(selectUserPosition);
   const radiusKm = useAppSelector(selectRadiusKm);
   const isRadiusFilterEnabled = useAppSelector(selectIsRadiusFilterEnabled);
-  const sortBy = useAppSelector(selectFilters);
+  const sortBy = useAppSelector(selectFilters).sortBy;
 
   const services = useMemo<ServiceWithDistance[]>(() => {
     const source = query.data ?? [];
-
-    if (!userPosition) {
+    if (userPosition === null) {
       return source.map((service) => ({ ...service, distanceKm: null }));
     }
 
-    let enriched = source.map((service) => ({
+    let enriched: ServiceWithDistance[] = source.map((service) => ({
       ...service,
-      distanceKm: distanceInKm(userPosition, {
-        lat: service.location.lat,
-        lng: service.location.lng,
-      }),
+      distanceKm: distanceInKm(userPosition, service.location),
     }));
 
     if (isRadiusFilterEnabled) {
-      enriched = enriched.filter((s) => s.distanceKm! <= radiusKm);
+      enriched = enriched.filter(
+        (service) =>
+          service.distanceKm !== null && service.distanceKm <= radiusKm,
+      );
     }
 
     if (sortBy === "distance") {
-      // sort روی آرایهٔ تازه‌ساخته‌شده امن است (mutation کش TanStack Query نیست)
-      enriched.sort((a, b) => a.distanceKm! - b.distanceKm!);
+      enriched.sort((a, b) => {
+        if (a.distanceKm === null || b.distanceKm === null) return 0;
+        return a.distanceKm - b.distanceKm;
+      });
     }
 
     return enriched;
   }, [query.data, userPosition, radiusKm, isRadiusFilterEnabled, sortBy]);
 
+  const sourceCount = query.data?.length ?? 0;
   return {
     ...query,
     services,
-    hiddenByRadiusCount: Math.max(
-      (query.data?.length ?? 0) - services.length,
-      0,
-    ),
+    hiddenByRadiusCount:
+      userPosition !== null && isRadiusFilterEnabled
+        ? Math.max(sourceCount - services.length, 0)
+        : 0,
     isDistanceAvailable: userPosition !== null,
   };
 }
