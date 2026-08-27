@@ -1,4 +1,7 @@
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { GeolocationErrorReason } from "./types";
+import { selectGeoState } from "@/store/geolocation-slice";
+import { useEffect, useRef } from "react";
 
 const GEOLOCATION_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
@@ -19,4 +22,17 @@ function mapPositionError(
     default:
       return "unsupported";
   }
+}
+
+export function useGeolocation() {
+    const dispatch = useAppDispatch()
+    const geo = useAppSelector(selectGeoState)
+    const isMountedRef = useRef(true);
+
+    useEffect(() => {
+      isMountedRef.current = true;
+      return () => {
+        isMountedRef.current = false;
+      };
+    }, []);
 }
