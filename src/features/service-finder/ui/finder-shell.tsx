@@ -55,7 +55,7 @@ export function FinderShell() {
         <Sheet>
           <SheetTrigger
             render={
-              <Button variant="outline" size="sm" className="ms-auto">
+              <Button variant="outline" size="sm" className="ms-auto" onClick={()=>setMobileView("list")}>
                 <SlidersHorizontal className="size-4" aria-hidden="true" />
                 Filters
                 {activeCount > 0 && (
