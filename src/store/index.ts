@@ -3,6 +3,7 @@ import { selectionReducer } from "./selection-slice";
 import uiSlice from "./ui-slice";
 import { filtersReducer } from "./filters-slice";
 import { geoSlice } from "./geolocation-slice";
+import { spatialFilterReduce } from "./spatial-filter-slice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     ui: uiSlice,
     geolocation: geoSlice,
     filters: filtersReducer,
+    spatialFilter: spatialFilterReduce,
   },
 });
 

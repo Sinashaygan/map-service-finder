@@ -1,4 +1,7 @@
-import { DrawnShape, SpatialFilterState } from "@/features/service-finder/model/type";
+import {
+  DrawnShape,
+  SpatialFilterState,
+} from "@/features/service-finder/model/type";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: SpatialFilterState = {
@@ -27,4 +30,4 @@ export const spatialFilterSlice = createSlice({
 export const { setDrawnShape, clearDrawnShape, toggleShapeFilter } =
   spatialFilterSlice.actions;
 
-export default spatialFilterSlice.reducer;
+export const spatialFilterReduce = spatialFilterSlice.reducer;
