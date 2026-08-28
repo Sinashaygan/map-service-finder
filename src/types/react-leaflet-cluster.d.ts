@@ -14,6 +14,9 @@ declare module "react-leaflet-cluster" {
       getAllChildMarkers: () => Marker[];
     }) => Icon | DivIcon;
     polylineOptions?: Record<string, unknown>;
+    chunkedLoading?: boolean;
+    chunkInterval?: number;
+    chunkDelay?: number;
   }
 
   const MarkerClusterGroup: ComponentType<MarkerClusterGroupProps>;
