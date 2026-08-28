@@ -1,200 +1,237 @@
-# tehran-map-services-finder
+<div align="center">
 
-An interactive, map-driven service finder for Tehran built with Next.js, React-Leaflet, Redux Toolkit, and Supabase. The application allows users to discover, filter, and spatially query urban local services (restaurants, cafes, pharmacies, hospitals, mechanics, hotels, and coworking spaces) across Tehran with real-time browser geolocation, radius proximity search, and bounding box map drawing.
+# 🗺️ Tehran Map Service Finder
 
-**Repository:** [https://github.com/Sinashaygan/map-service-finder](https://github.com/Sinashaygan/map-service-finder)
+### Discover, filter, and explore local services on an interactive map.
 
----
+Built with **Next.js App Router**, **React**, **TypeScript**, **React-Leaflet**, **Redux Toolkit**, **TanStack Query**, and **Supabase**.
 
-## Key Features
+<br />
 
-- **Interactive Tehran Map Interface:** High-performance mapping powered by React-Leaflet and Leaflet with custom category marker icons and dynamic map centering/focus controls.
-- **Spatial Filtering & Map Drawing:**
-  - Freeform rectangle bounding-box drawing directly on the map to filter services inside a selected geographical region.
-  - Spatial filter badge indicators with one-click clear functionality.
-- **Browser Geolocation & Proximity:**
-  - Browser-based user location detection (`Locate Me`).
-  - Adjustable search radius control slider.
-  - Real-time Haversine distance calculations from the user position to each service.
-- **Multi-faceted Filtering:**
-  - Text search (debounced name/address query).
-  - Category selector (`restaurant`, `cafe`, `pharmacy`, `hospital`, `mechanic`, `hotel`, `coworking`).
-  - Minimum rating threshold slider (0–5).
-  - Price level filter (1–4 / `$` to `$$$$`).
-  - Open/closed status toggle switch (`is_open`).
-- **Synchronized State Management:**
-  - Redux Toolkit slices orchestrating filters, geolocation, active selection, and spatial queries.
-  - Bidirectional selection sync: clicking an item in the sidebar list highlights/focuses the corresponding map marker, and vice-versa.
-- **Data Validation & Type Safety:** Strict runtime schema validation using Zod for backend responses and TypeScript types across the entire codebase.
+[![Next.js](https://img.shields.io/badge/Next.js-16.3.2-000000?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.8-61DAFB?style=for-the-badge&logo=react&logoColor=000)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?style=for-the-badge&logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-1.9.4-199900?style=for-the-badge&logo=leaflet&logoColor=fff)](https://leafletjs.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=000)](https://supabase.com/)
+[![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5-FF4154?style=for-the-badge&logo=reactquery&logoColor=fff)](https://tanstack.com/query/latest)
+
+<br />
+
+[Features](#-features) ·
+[Getting Started](#-getting-started) ·
+[Architecture](#-architecture) ·
+[Database](#-database) ·
+[Deployment](#-deployment)
+
+</div>
 
 ---
 
-## Tech Stack
+## ✨ Overview
 
-- **Framework:** Next.js (App Router) & React
-- **Mapping:** Leaflet & React-Leaflet (with `react-leaflet-cluster` support)
-- **State Management & Async Data:** Redux Toolkit & React Query / TanStack Query
-- **Backend & Database:** Supabase (`@supabase/supabase-js`, PostgreSQL)
-- **Schema & Validation:** Zod
-- **Styling & UI Components:** Tailwind CSS, Radix UI primitives / Shadcn UI components, Lucide Icons
+**Tehran Map Service Finder** is a responsive, map-first web application for finding urban services across Tehran. Users can search services, filter by category or rating, locate themselves, search within a radius, and draw a region on the map to show only services inside that shape.
 
----
+The map and sidebar list stay synchronized: selecting a service highlights its marker and focuses the map, while selecting a marker highlights the corresponding service in the list.
 
-## Architecture & Project Structure
+> The application uses Supabase as its data source and performs distance and drawn-shape filtering in the browser.
 
-The project follows a modular, Feature-Sliced inspired layout under `src/`:
+## 🌟 Features
 
-```
-tehran-map-services-finder/
+### 🗺️ Interactive Map
+
+- Tehran-centered Leaflet map with OpenStreetMap tiles
+- Custom category-based service markers
+- Marker clustering for dense areas
+- Popup details for every service
+- Smooth map focus and zoom when a service is selected
+- Responsive map/list layout for desktop and mobile
+
+### ✏️ Draw-and-Filter
+
+- Draw polygons or rectangles directly on the map
+- Filter services whose coordinates fall inside the drawn shape
+- Edit or delete an existing shape
+- Clear the active shape filter from the sidebar badge
+
+### 📍 Location & Radius Search
+
+- Browser geolocation with permission and error states
+- User location marker and radius visualization
+- Adjustable search radius
+- Haversine distance calculation for each service
+- Optional radius filtering and distance-based sorting
+
+### 🔎 Service Filters
+
+- Debounced name search
+- Multi-select service categories:
+  - `restaurant`
+  - `cafe`
+  - `pharmacy`
+  - `hospital`
+  - `mechanic`
+  - `hotel`
+  - `coworking`
+- Minimum rating filter from `0` to `5`
+- Sort by highest rating, name, or distance
+
+### 🔄 Synchronized UI State
+
+- Redux Toolkit manages filters, geolocation, selection, and spatial filter state
+- TanStack Query handles Supabase fetching and cached results
+- Zod validates Supabase responses at the API boundary
+- Map markers and service list remain synchronized
+- Selected services automatically scroll into view in the list
+
+## 🛠️ Tech Stack
+
+| Category | Technologies |
+| --- | --- |
+| Framework | Next.js `16.3.2`, App Router |
+| UI | React `19`, Tailwind CSS `4`, shadcn-style components |
+| Language | TypeScript |
+| Mapping | Leaflet, React-Leaflet, Leaflet Draw, MarkerCluster |
+| State Management | Redux Toolkit, React Redux |
+| Data Fetching | TanStack Query `v5` |
+| Backend | Supabase / PostgreSQL |
+| Validation | Zod |
+| Icons | Lucide React |
+
+## 🧱 Architecture
+
+The project uses a Feature-Sliced inspired structure under `src/`:
+
+```text
+map-service-finder/
 ├── scripts/
-│   └── seed.ts                     # Database seeding script with realistic Tehran coordinates
+│   └── seed.ts                       # Supabase sample-data seeding
 ├── src/
-│   ├── app/                        # Next.js App Router root layout, page, and providers
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── providers.tsx
-│   ├── components/ui/              # Reusable UI components (buttons, dialogs, sliders, etc.)
-│   ├── entities/
-│   │   └── service/                # Service entity definitions, Zod schemas, mapping, & list item UI
-│   │       ├── lib/
-│   │       ├── model/              # types.ts, schema.ts, filters.ts
-│   │       └── ui/                 # service-list-item.tsx, service-marker-icon.tsx
-│   ├── features/                   # Encapsulated user capabilities & feature modules
-│   │   ├── geolocation/            # Geolocation hook, locate button, radius control
-│   │   ├── service-filters/        # Filter bar, selectors, loading skeletons
-│   │   └── service-finder/         # Map view, drawing controls, spatial filters, finder shell
-│   ├── lib/                        # Utility functions
-│   ├── shared/                     # Shared cross-cutting utilities & hooks
-│   │   ├── hook/                   # Debounce and helper hooks
-│   │   └── lib/                    # Distance calculation, Leaflet setup, Supabase client
-│   ├── store/                      # Redux Toolkit store and slices
-│   │   ├── filters-slice.ts        # Search text, category, price, rating, open status
-│   │   ├── geolocation-slice.ts    # User coordinates & search radius
-│   │   ├── selection-slice.ts      # Active/highlighted service ID
-│   │   ├── spatial-filter-slice.ts # Bounding box coordinates for map drawing
-│   │   ├── hooks.ts                # Typed useDispatch & useSelector hooks
-│   │   └── index.ts                # Store configuration
-│   └── types/                      # Ambient declarations (e.g. cluster types)
+│   ├── app/                          # App Router page, layout, providers, styles
+│   ├── components/ui/                # Reusable UI primitives
+│   ├── entities/service/             # Service types, schema, mapping, UI
+│   ├── features/
+│   │   ├── geolocation/              # Location permission and radius controls
+│   │   ├── service-filters/          # Search, category, rating, and sorting UI
+│   │   └── service-finder/           # Map, drawing, list, and finder shell
+│   ├── shared/                       # Shared hooks and geographic utilities
+│   └── store/                        # Redux store and feature slices
+└── public/                           # Static assets
 ```
 
----
+### Data Flow
 
-## Data Flow
+1. `useFilteredServices` builds active query filters and fetches matching rows from Supabase through TanStack Query.
+2. Supabase rows are validated with Zod and mapped into the domain `Service` type.
+3. `useServicesWithDistance` enriches services with browser-location distance and applies the optional radius filter.
+4. `useSpatialFilter` applies the active GeoJSON polygon or rectangle using Turf.
+5. The final collection renders in both the sidebar list and the Leaflet map.
 
-1. **Query & Fetching:** `useServices` fetches raw records from the Supabase `service` table.
-2. **Runtime Validation & Normalization:** `fetchFiltersServices` validates records against `serviceListSchema` (Zod) and transforms backend rows into clean `Service` entities.
-3. **State Integration:** User interactions (filter inputs, category choices, geolocation, map drawing) dispatch actions to Redux slices (`filters`, `geolocation`, `spatialFilter`, `selection`).
-4. **Derived Spatial & Filter Pipeline:**
-   - `useServicesWithDistance` computes Euclidean/Haversine distance from the user's geolocated position.
-   - `useSpatialFilters` subsets services within the active bounding box (if drawn).
-   - `useFilteredServices` applies text query, category, price, rating, and open-status filters.
-5. **View Synchronization:** The resulting list updates the responsive sidebar list and places interactive Leaflet map markers in sync.
+## 🗄️ Database
 
----
+The app expects a Supabase PostgreSQL table named `service` with these fields:
 
-## Database Schema (Supabase)
-
-The project expects a PostgreSQL table named `service` in Supabase with the following schema:
-
-| Column | Type | Constraints / Description |
+| Column | Type | Description |
 | :--- | :--- | :--- |
-| `id` | `uuid` | Primary Key (e.g., `gen_random_uuid()`) |
-| `name` | `text` | Required service name |
-| `category` | `text` | One of: `restaurant`, `cafe`, `pharmacy`, `hospital`, `mechanic`, `hotel`, `coworking` |
+| `id` | `uuid` | Primary key |
+| `name` | `text` | Service name |
+| `category` | `text` | Supported service category |
 | `description` | `text` | Service description |
-| `address` | `text` | Physical address in Tehran |
-| `rating` | `numeric` / `float8` | Decimal rating between `0.0` and `5.0` |
-| `review_count` | `integer` | Non-negative integer |
-| `price_level` | `integer` | Value between `1` and `4` (`$` to `$$$$`) |
-| `image_url` | `text` | Valid image URL |
-| `is_open` | `boolean` | Current open/operating status |
-| `tags` | `text[]` / `jsonb` | Array of descriptive tag strings |
-| `latitude` | `float8` | Latitude coordinate (e.g. `35.6892` Tehran range) |
-| `longitude` | `float8` | Longitude coordinate (e.g. `51.3890` Tehran range) |
-| `created_at` | `timestamptz` | Record creation timestamp |
-| `updated_at` | `timestamptz` | Record last update timestamp |
+| `address` | `text` | Tehran address |
+| `rating` | `numeric` | Value from `0` to `5` |
+| `review_count` | `integer` | Number of reviews |
+| `price_level` | `integer` | Value from `1` to `4` |
+| `image_url` | `text` | Service image URL |
+| `is_open` | `boolean` | Current open status |
+| `tags` | `text[]` | Searchable tags |
+| `latitude` | `float8` | Latitude |
+| `longitude` | `float8` | Longitude |
+| `created_at` | `timestamptz` | Creation timestamp |
+| `updated_at` | `timestamptz` | Last update timestamp |
 
----
-
-## Getting Started
+## 📦 Getting Started
 
 ### Prerequisites
 
-- Node.js (v18+ recommended)
-- npm, yarn, or pnpm
-- A Supabase project instance
+- Node.js 18 or newer
+- npm
+- A Supabase project with a `service` table
 
-### Environment Configuration
+### 1. Clone the repository
 
-Create a `.env.local` file in the root directory:
+```bash
+git clone https://github.com/Sinashaygan/map-service-finder.git
+cd map-service-finder
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create `.env.local` in the project root:
 
 ```env
-# Client-side variables (used by Next.js app in the browser)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-
-# Server-only / Seeding credentials (NEVER expose to client-side bundles)
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 ```
 
-> **Security Warning:** `SUPABASE_SERVICE_ROLE_KEY` bypasses PostgreSQL Row-Level Security (RLS). It must only be used in trusted server-side scripts (such as `scripts/seed.ts`) and must **never** be prefixed with `NEXT_PUBLIC_` or shared in client bundles.
+`SUPABASE_SERVICE_ROLE_KEY` is only required by the seed script. Never expose it in client-side code or prefix it with `NEXT_PUBLIC_`.
 
-### Installation & Local Development
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Sinashaygan/map-service-finder.git
-   cd map-service-finder
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Seeding Tehran Sample Data
-
-The repository includes a seeding script (`scripts/seed.ts`) that populates Supabase with realistic services concentrated across key Tehran districts (Tajrish, Niavaran, Saadat Abad, Vanak, Shahrak-e Gharb, etc.).
-
-Example execution using a TypeScript runner (adjust according to the scripts configured in your `package.json`):
+### 4. Seed sample services (optional)
 
 ```bash
-# Example using ts-node or npx tsx
-npx tsx scripts/seed.ts
+npm run seed
 ```
 
-> *Note: Seeding requires `SUPABASE_SERVICE_ROLE_KEY` and `NEXT_PUBLIC_SUPABASE_URL` to be present in `.env.local`.*
+### 5. Start the development server
 
----
+```bash
+npm run dev
+```
 
-## Development Notes & Considerations
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- **Leaflet CSS & SSR:** Leaflet depends on window objects not present in server-side Node.js environments. The map components use dynamic client-side loading (`service-map-loader.tsx`) and require the Leaflet stylesheet (`leaflet/dist/leaflet.css`) imported in `globals.css` or layout.
-- **Browser Geolocation Permissions:** The "Locate Me" feature requires the user's browser permission for the Geolocation API. In development and production, this API is typically restricted to secure contexts (`https://` or `localhost`).
-- **Snapshot Notice:** Note that `package.json` and SQL migration files were not included in the source snapshot provided with this distribution; check the exact package scripts and database policies against the live repository before production deployment.
+## 🧪 Scripts
 
----
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run start` | Start the production server |
+| `npm run lint` | Run ESLint |
+| `npm run seed` | Seed Supabase with sample services |
 
-## Accessibility & Security Notes
+## 🚀 Deployment
 
-- **Input Accessibility:** Accessible form controls, sliders, and buttons built on top of Radix UI primitives.
-- **Key Safety:** Client operations use only the read-restricted Supabase anonymous key with Row-Level Security enabled. The administrative service-role key is kept strictly isolated to offline seeding scripts.
-- **Runtime Validation:** All external data fetched from Supabase is validated through Zod before entering the UI layer to prevent runtime crashes caused by malformed database records.
+The application can be deployed to any Next.js-compatible host, including Vercel:
 
----
+1. Create a production build with `npm run build`.
+2. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` to the deployment environment.
+3. Enable appropriate Supabase Row Level Security policies for the `service` table.
+4. Deploy the project.
 
-## Roadmap & Future Enhancements
+The service-role key should remain restricted to trusted server-side or local seed environments.
 
-- [ ] Interactive route and directions calculation from user location to selected service.
-- [ ] PostGIS spatial queries on the Supabase backend for native GeoJSON spatial indexing.
-- [ ] User review and rating submission forms.
-- [ ] Multi-language support (Persian / Farsi localization and RTL layout optimization).
-- [ ] Offline caching and Progressive Web App (PWA) capabilities.
+## 🔐 Notes
+
+- Leaflet is loaded dynamically on the client because it depends on browser APIs.
+- Browser geolocation requires user permission and generally works only on `localhost` or HTTPS.
+- Drawn-shape filtering currently runs client-side with Turf; PostGIS can be added later for large datasets.
+- The root route `/` is the application's finder view.
+
+## 🧭 Roadmap
+
+- [ ] Server-side PostGIS spatial queries and indexing
+- [ ] Directions and route visualization
+- [ ] Service detail pages
+- [ ] Reviews and rating submissions
+- [ ] Persian localization and RTL support
+- [ ] Offline caching and PWA support
+
+## 📄 License
+
+This project is private and intended for development, demonstration, and prototyping unless a separate license is provided.
