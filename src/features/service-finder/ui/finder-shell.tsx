@@ -19,14 +19,18 @@ import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import { ServiceList } from "./service-list";
 import ServiceMap from "./service-map-loader";
-import { useFilteredServices } from "../model/use-filtered-services";
 import { useSelectionSync } from "../model/use-selection-sync";
+import { SpatialFilterBadge } from "./spatial-filter-badge";
+import { useServicesWithDistance } from "../model/use-services-with-distance";
+import { useSpatialFilter } from "../model/use-spatial-filters";
 
 type ViewMode = "map" | "list";
 
 export function FinderShell() {
   const [mobileView, setMobileView] = useState<ViewMode>("map");
-  const { services, isPending } = useFilteredServices();
+  const { services: distanceFilteredServices, isPending } =
+    useServicesWithDistance();
+  const services = useSpatialFilter(distanceFilteredServices);
   const activeCount = useAppSelector(selectActiveFilterCount);
 
   useSelectionSync(services, isPending);
@@ -55,7 +59,12 @@ export function FinderShell() {
         <Sheet>
           <SheetTrigger
             render={
-              <Button variant="outline" size="sm" className="ms-auto" onClick={()=>setMobileView("list")}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ms-auto"
+                onClick={() => setMobileView("list")}
+              >
                 <SlidersHorizontal className="size-4" aria-hidden="true" />
                 Filters
                 {activeCount > 0 && (
@@ -89,7 +98,13 @@ export function FinderShell() {
           <div className="hidden border-b md:block">
             <FilterBar />
           </div>
-          <div className="min-h-0 flex-1 overflow-hidden">
+          {/* <div className="min-h-0 flex-1 overflow-hidden">
+            <ServiceList />
+          </div> */}
+
+          <div className="flex flex-1 flex-col gap-2 overflow-hidden">
+            {/* <FilterBar /> */}
+            <SpatialFilterBadge />
             <ServiceList />
           </div>
         </aside>

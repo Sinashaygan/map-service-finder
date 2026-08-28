@@ -14,6 +14,8 @@ import { createServiceMarkerIcon } from "@/entities/service/ui/service-marker-ic
 import { MapFocusController } from "./map-focus-controller";
 import { UserLocationLayer } from "./location-finder";
 import { useServicesWithDistance } from "../model/use-services-with-distance";
+import { MapDrawingControl } from "./map-drawing-control";
+import { useSpatialFilter } from "../model/use-spatial-filters";
 
 const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
 const DEFAULT_ZOOM = 12;
@@ -40,6 +42,7 @@ function FlyToSelected({ services }: { services: ServiceWithDistance[] }) {
 export default function ServiceMap() {
   const dispatch = useAppDispatch();
   const { services } = useServicesWithDistance();
+  const filtered = useSpatialFilter(services);
   const { selectedServiceId, hoveredServiceId } = useAppSelector(
     (state) => state.selection,
   );
@@ -55,6 +58,7 @@ export default function ServiceMap() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <MapDrawingControl />
       <MapFocusController />
       <UserLocationLayer />
 
@@ -63,8 +67,9 @@ export default function ServiceMap() {
         disableClusteringAtZoom={MAX_CLUSTER_ZOOM}
         showCoverageOnHover={false}
         spiderfyOnMaxZoom
+        chunkedLoading
       >
-        {services.map((service) => (
+        {filtered.map((service) => (
           <Marker
             key={service.id}
             position={[service.location.lat, service.location.lng]}
@@ -89,7 +94,7 @@ export default function ServiceMap() {
         ))}
       </MarkerClusterGroup>
 
-      <FlyToSelected services={services} />
+      <FlyToSelected services={filtered} />
     </MapContainer>
   );
 }

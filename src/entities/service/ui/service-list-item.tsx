@@ -11,6 +11,7 @@ function formatDistance(distanceKm: number): string {
 }
 interface ServiceListItemProps {
   service: ServiceWithDistance;
+  serviceId?: string;
   isSelected: boolean;
   isHovered: boolean;
   onSelect: () => void;
@@ -19,13 +20,14 @@ interface ServiceListItemProps {
 
 export function ServiceListItem({
   service,
+  serviceId,
   isSelected,
   isHovered,
   onSelect,
   onHoverChange,
 }: ServiceListItemProps) {
   return (
-    <li>
+    <li data-service-id={serviceId ?? service.id}>
       {/* A real <button> gives us keyboard activation and focus rings for free. */}
       <button
         type="button"
