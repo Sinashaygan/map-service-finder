@@ -8,16 +8,32 @@ import {
 } from "@/store/selection-slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useServicesWithDistance } from "../model/use-services-with-distance";
-import {ServiceListItem} from "@/entities/service/ui/service-list-item"
+import { useSpatialFilter } from "../model/use-spatial-filters";
+import { ServiceListItem } from "@/entities/service/ui/service-list-item";
 import { ServiceListSkeleton } from "@/features/service-filters/ui/service-list-skeleton";
+import { useEffect } from "react";
 
 export function ServiceList() {
   const dispatch = useAppDispatch();
-  const { services, isPending, isError, error, isRefiltering } =
+  const { services: distanceFilteredServices, isPending, isError, error, isRefiltering } =
     useServicesWithDistance();
+  const services = useSpatialFilter(distanceFilteredServices);
   const { selectedServiceId, hoveredServiceId } = useAppSelector(
     (state) => state.selection,
   );
+
+  useEffect(() => {
+    if (!selectedServiceId) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const selectedItem = document.querySelector<HTMLElement>(
+        `[data-service-id="${CSS.escape(selectedServiceId)}"]`,
+      );
+      selectedItem?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [selectedServiceId, services.length]);
 
   if (isPending) return <ServiceListSkeleton />;
 
@@ -50,6 +66,7 @@ export function ServiceList() {
         {services.map((service) => (
           <ServiceListItem
             key={service.id}
+            serviceId={service.id}
             service={service}
             isSelected={service.id === selectedServiceId}
             isHovered={service.id === hoveredServiceId}
